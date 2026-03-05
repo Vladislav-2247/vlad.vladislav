@@ -1,0 +1,2364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPaint · Пресеты размеров холста</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Segoe UI Variable', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: #1c1c1e;
+            position: relative;
+            overflow: auto;
+        }
+
+        /* Анимированный фон */
+        .glass-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 30%, rgba(100,100,255,0.15), rgba(50,50,100,0.1) 70%);
+            pointer-events: none;
+            z-index: -1;
+            animation: gradientMove 15s ease infinite;
+        }
+
+        @keyframes gradientMove {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.8; }
+        }
+
+        .glass-reflection {
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 60%);
+            pointer-events: none;
+            z-index: -1;
+            animation: rotate 30s linear infinite;
+            opacity: 0.3;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .scale-in {
+            animation: scaleIn 0.2s ease-out;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 480px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-radius: 32px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+            overflow: hidden;
+            padding: 32px;
+            color: white;
+            animation: scaleIn 0.4s ease-out;
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .auth-header h1 {
+            font-size: 36px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #fff, #aaccff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .auth-header p {
+            color: rgba(255,255,255,0.7);
+            font-size: 16px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 40px;
+            padding: 4px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            color: rgba(255,255,255,0.7);
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 40px;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: rgba(255,255,255,0.25);
+            color: white;
+            backdrop-filter: blur(10px);
+        }
+
+        .form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .form.hidden {
+            display: none;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .input-group label {
+            font-size: 14px;
+            font-weight: 500;
+            color: rgba(255,255,255,0.9);
+            margin-left: 4px;
+        }
+
+        .input-group input {
+            padding: 14px 16px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 24px;
+            font-size: 15px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            backdrop-filter: blur(10px);
+            transition: all 0.2s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: rgba(255,255,255,0.5);
+            background: rgba(255,255,255,0.15);
+        }
+
+        .input-group input::placeholder {
+            color: rgba(255,255,255,0.4);
+        }
+
+        .google-btn {
+            background: white;
+            color: #1c1c1e;
+            border: none;
+            padding: 14px 16px;
+            border-radius: 40px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.3s;
+            margin-top: 8px;
+            width: 100%;
+            height: 56px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .google-btn:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .google-btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .google-btn img {
+            width: 24px;
+            height: 24px;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: rgba(255,255,255,0.5);
+            margin: 16px 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .divider span {
+            padding: 0 10px;
+        }
+
+        .photo-upload {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 8px 0;
+        }
+
+        .photo-preview {
+            width: 60px;
+            height: 60px;
+            border-radius: 30px;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .photo-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-preview span {
+            font-size: 24px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .photo-btn {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 30px;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .photo-btn:hover {
+            background: rgba(255,255,255,0.25);
+        }
+
+        .optional-badge {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+            margin-left: 8px;
+            font-weight: normal;
+        }
+
+        .submit-btn {
+            background: rgba(255,255,255,0.25);
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 16px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 8px;
+        }
+
+        .submit-btn:hover {
+            background: rgba(255,255,255,0.35);
+            transform: translateY(-2px);
+        }
+
+        .error-message {
+            background: rgba(255, 80, 80, 0.2);
+            border: 1px solid rgba(255, 80, 80, 0.3);
+            padding: 12px;
+            border-radius: 16px;
+            color: #ffb3b3;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        .success-message {
+            background: rgba(80, 255, 80, 0.1);
+            border: 1px solid rgba(80, 255, 80, 0.2);
+            padding: 12px;
+            border-radius: 16px;
+            color: #b3ffb3;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        .link-btn {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.8);
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        .link-btn:hover {
+            color: white;
+        }
+
+        .app-container {
+            width: 100%;
+            display: none;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255,255,255,0.15);
+            padding: 6px 16px 6px 6px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .user-info:hover {
+            background: rgba(255,255,255,0.25);
+            transform: scale(1.02);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 18px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.3);
+            overflow: hidden;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-avatar span {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            font-size: 18px;
+            color: white;
+        }
+
+        .user-name {
+            color: white;
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 6px 12px;
+            border-radius: 30px;
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.05);
+        }
+
+        .memory-stats {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255,255,255,0.1);
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 13px;
+            color: white;
+        }
+
+        .memory-bar {
+            width: 60px;
+            height: 6px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .memory-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff9d, #00b8ff);
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+
+        .modern-window {
+            width: 1400px;
+            max-width: 100%;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-radius: 28px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+            overflow: hidden;
+            animation: scaleIn 0.4s ease-out;
+        }
+
+        .title-bar {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(20px);
+            padding: 10px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .title-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .time {
+            font-weight: 500;
+            color: white;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 13px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        h1 {
+            font-size: 22px;
+            font-weight: 600;
+            color: white;
+            letter-spacing: -0.2px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .action-buttons {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .modern-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-weight: 500;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            color: white;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .modern-btn:hover { 
+            background: rgba(255, 255, 255, 0.3); 
+            transform: scale(1.05);
+        }
+
+        .modern-btn:active { transform: scale(0.98); }
+
+        .tabs-container {
+            display: flex;
+            gap: 4px;
+            padding: 0 18px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-x: auto;
+        }
+
+        .modern-tab {
+            padding: 10px 20px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .modern-tab:hover { 
+            color: white; 
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+        }
+        .modern-tab.active {
+            color: white;
+            border-bottom: 2px solid white;
+            background: linear-gradient(to top, rgba(255,255,255,0.15), transparent);
+        }
+
+        .main-layout {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            min-height: 600px;
+            max-height: 700px;
+            background: rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .canvas-container {
+            flex: 1.5;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 28px;
+            padding: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        canvas {
+            width: 100%;
+            max-width: 100%;
+            aspect-ratio: attr(width) / attr(height);
+            border-radius: 24px;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            cursor: crosshair;
+            margin: 0 auto;
+            transition: all 0.3s;
+        }
+
+        canvas:hover {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+
+        /* НОВЫЕ ПРЕСЕТЫ РАЗМЕРОВ ХОЛСТА */
+        .canvas-size-presets {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+            padding: 8px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+        }
+
+        .size-preset {
+            flex: 1;
+            min-width: 70px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 30px;
+            padding: 8px 4px;
+            color: white;
+            font-size: 12px;
+            font-weight: 500;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .size-preset:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-2px);
+            border-color: #00fff9;
+        }
+
+        .size-preset.active {
+            background: linear-gradient(135deg, #00fff9, #00b8ff);
+            border-color: white;
+            box-shadow: 0 0 15px rgba(0, 255, 249, 0.3);
+        }
+
+        .current-size {
+            color: white;
+            font-size: 13px;
+            margin-left: 8px;
+        }
+
+        .png-layer {
+            position: relative;
+            width: 100%;
+            height: auto;
+            margin-top: 10px;
+        }
+
+        .png-object {
+            position: relative;
+            display: inline-block;
+            margin: 5px;
+            cursor: move;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+            animation: scaleIn 0.3s ease-out;
+        }
+
+        .png-object:hover {
+            border: 2px solid #00fff9;
+            transform: scale(1.02);
+        }
+
+        .png-object.selected {
+            border: 3px solid #007AFF;
+        }
+
+        .png-object img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 12px;
+            pointer-events: none;
+        }
+
+        .png-resize-handle {
+            position: absolute;
+            bottom: -10px;
+            right: -10px;
+            width: 20px;
+            height: 20px;
+            background: #007AFF;
+            border-radius: 10px;
+            cursor: nwse-resize;
+            pointer-events: auto;
+        }
+
+        .png-delete-btn {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 20px;
+            height: 20px;
+            background: #ff3b30;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+            pointer-events: auto;
+        }
+
+        .right-panel {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 28px;
+            padding: 18px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            overflow-y: auto;
+        }
+
+        .palette-section {
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 14px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .color-picker-area {
+            display: flex;
+            gap: 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        .hue-bar-container {
+            width: 24px;
+            height: 140px;
+        }
+
+        .hue-bar {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
+            border-radius: 30px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .hue-indicator {
+            position: absolute;
+            width: 32px;
+            height: 4px;
+            background: white;
+            left: -4px;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px black;
+            border: 1px solid rgba(255,255,255,0.8);
+            pointer-events: none;
+        }
+
+        .main-palette {
+            flex: 1;
+            height: 140px;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: crosshair;
+            position: relative;
+        }
+
+        .main-palette canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            border: none;
+            box-shadow: none;
+            border-radius: 0;
+            max-width: none;
+        }
+
+        .preview-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 12px 0;
+        }
+
+        .current-color {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            background: #000;
+            border: 2px solid rgba(255,255,255,0.4);
+        }
+
+        .modern-add-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-weight: 500;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .modern-add-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.05);
+        }
+
+        .custom-colors {
+            background: rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 12px;
+        }
+
+        .swatches-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 8px 0;
+            min-height: 46px;
+        }
+
+        .color-swatch {
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            cursor: pointer;
+            border: 2px solid rgba(255,255,255,0.4);
+            transition: all 0.2s;
+        }
+
+        .color-swatch:hover {
+            transform: scale(1.1);
+            border-color: white;
+        }
+
+        .presets-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 4px;
+            background: rgba(255,255,255,0.1);
+            padding: 8px;
+            border-radius: 16px;
+        }
+
+        .preset-swatch {
+            aspect-ratio: 1/1;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid rgba(255,255,255,0.4);
+            transition: all 0.2s;
+        }
+
+        .preset-swatch:hover {
+            transform: scale(1.1);
+            border-color: white;
+        }
+
+        .tools-section {
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 14px;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            margin: 10px 0;
+        }
+
+        .tool-card {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 14px;
+            padding: 8px 4px;
+            text-align: center;
+            cursor: pointer;
+            color: white;
+            font-size: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            transition: all 0.2s;
+        }
+        .tool-card:hover { 
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-2px);
+        }
+        .tool-card.active {
+            background: rgba(255,255,255,0.35);
+            border-color: white;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 8px 0;
+        }
+
+        .modern-slider {
+            flex: 1;
+            height: 4px;
+            -webkit-appearance: none;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+        }
+        .modern-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: white;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.8);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .modern-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .value-badge {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-weight: 500;
+            font-size: 12px;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .png-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .png-item {
+            background: rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            animation: scaleIn 0.3s ease-out;
+        }
+
+        .png-item:hover {
+            transform: translateY(-4px) scale(1.05);
+            background: rgba(255,255,255,0.2);
+        }
+
+        .png-item img {
+            width: 100%;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        .png-item-title {
+            color: white;
+            font-size: 12px;
+            margin-top: 8px;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .internet-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.1);
+            margin-bottom: 12px;
+        }
+
+        .status-online {
+            color: #00ff9d;
+        }
+
+        .status-offline {
+            color: #ff3b30;
+        }
+
+        /* Настройки - теперь только удаление аккаунта */
+        .settings-section {
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+
+        .settings-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+        }
+
+        .danger-btn {
+            background: rgba(255, 60, 60, 0.3);
+            border: 1px solid rgba(255, 60, 60, 0.5);
+            color: #ffb3b3;
+        }
+
+        .danger-btn:hover {
+            background: rgba(255, 60, 60, 0.5);
+        }
+    </style>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+</head>
+<body>
+    <div class="glass-background"></div>
+    <div class="glass-reflection"></div>
+
+    <!-- Контейнер для авторизации -->
+    <div id="authContainer" class="auth-container">
+        <div class="auth-header">
+            <h1>🎨 IPaint</h1>
+            <p>Войдите или создайте аккаунт</p>
+        </div>
+
+        <button class="google-btn" id="googleSignInBtn">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+            <span>Войти через Google</span>
+        </button>
+
+        <div class="divider">
+            <span>или</span>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" id="loginTabBtn">Вход</button>
+            <button class="tab-btn" id="registerTabBtn">Регистрация</button>
+        </div>
+
+        <div id="loginForm" class="form">
+            <div class="input-group">
+                <label>Электронная почта</label>
+                <input type="email" id="loginEmail" placeholder="example@mail.com">
+            </div>
+            <div class="input-group">
+                <label>Пароль</label>
+                <input type="password" id="loginPassword" placeholder="••••••••">
+            </div>
+            <button class="submit-btn" id="loginBtn">Войти</button>
+            <div id="loginMessage" class="error-message hidden"></div>
+        </div>
+
+        <div id="registerForm" class="form hidden">
+            <div class="input-group">
+                <label>Электронная почта</label>
+                <input type="email" id="regEmail" placeholder="example@mail.com">
+            </div>
+            <div class="input-group">
+                <label>Пароль <span style="font-size:12px; color:rgba(255,255,255,0.5);">(минимум 6 символов)</span></label>
+                <input type="password" id="regPassword" placeholder="••••••••">
+            </div>
+            <div class="input-group">
+                <label>Имя</label>
+                <input type="text" id="regFirstName" placeholder="Иван">
+            </div>
+            <div class="input-group">
+                <label>Фамилия</label>
+                <input type="text" id="regLastName" placeholder="Иванов">
+            </div>
+            <div class="input-group">
+                <label>Фото профиля <span class="optional-badge">(необязательно)</span></label>
+                <div class="photo-upload">
+                    <div class="photo-preview" id="photoPreview">
+                        <span>📷</span>
+                    </div>
+                    <input type="file" id="photoUpload" accept="image/*" style="display: none;">
+                    <button class="photo-btn" id="uploadPhotoBtn">Выбрать фото</button>
+                </div>
+            </div>
+            <button class="submit-btn" id="registerBtn">Создать аккаунт</button>
+            <div id="registerMessage" class="error-message hidden"></div>
+        </div>
+    </div>
+
+    <!-- Главное приложение -->
+    <div id="appContainer" class="app-container">
+        <div class="modern-window">
+            <div class="title-bar">
+                <div class="title-left">
+                    <span class="time" id="currentTime">--:--</span>
+                    <h1>🎨 IPaint</h1>
+                </div>
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <div class="memory-stats" id="memoryStats">
+                        <span>💾</span>
+                        <div class="memory-bar">
+                            <div class="memory-fill" id="memoryFill" style="width: 45%;"></div>
+                        </div>
+                        <span id="memoryUsed">9.2</span>
+                        <span>/ 20 МБ</span>
+                    </div>
+                    <div class="user-info" id="userInfo"></div>
+                    <button class="logout-btn" id="logoutBtn">Выйти</button>
+                </div>
+            </div>
+
+            <div class="tabs-container">
+                <div class="modern-tab active" data-tab="paint">🎨 Рисование</div>
+                <div class="modern-tab" data-tab="png">🖼️ PNG галерея</div>
+                <div class="modern-tab" data-tab="profile">👤 Профиль</div>
+                <div class="modern-tab" data-tab="settings">⚙️ Настройки</div>
+            </div>
+
+            <div class="main-layout" id="mainContent"></div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const firebaseConfig = {
+                apiKey: "AIzaSyBrM2VJ0JQ0Q0Q0Q0Q0Q0Q0Q0Q0Q0Q0Q0Q",
+                authDomain: "ipaint-gallery.firebaseapp.com",
+                projectId: "ipaint-gallery",
+                storageBucket: "ipaint-gallery.appspot.com",
+                messagingSenderId: "123456789012",
+                appId: "1:123456789012:web:abc123def456"
+            };
+
+            let auth;
+            try {
+                firebase.initializeApp(firebaseConfig);
+                auth = firebase.auth();
+                
+                const provider = new firebase.auth.GoogleAuthProvider();
+                
+                document.getElementById('googleSignInBtn').addEventListener('click', () => {
+                    auth.signInWithPopup(provider).then((result) => {
+                        const user = result.user;
+                        
+                        const googleUser = {
+                            email: user.email,
+                            firstName: user.displayName ? user.displayName.split(' ')[0] : 'Google',
+                            lastName: user.displayName ? user.displayName.split(' ').slice(1).join(' ') : 'User',
+                            photo: user.photoURL,
+                            password: 'google-auth',
+                            createdAt: new Date().toISOString()
+                        };
+                        
+                        if (!users[user.email]) {
+                            users[user.email] = googleUser;
+                            saveUsers();
+                        }
+                        
+                        currentUser = users[user.email];
+                        localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
+                        
+                        showApp();
+                        renderPaintTab();
+                    }).catch((error) => {
+                        console.error('Google Auth Error:', error);
+                        showError(loginMessage, 'Ошибка входа через Google: ' + error.message);
+                    });
+                });
+                
+                console.log('Firebase подключен');
+            } catch (e) {
+                console.log('Оффлайн режим - используем локальные данные');
+            }
+
+            const USERS_KEY = 'ipaint_users';
+            const CURRENT_USER_KEY = 'ipaint_current_user';
+
+            let users = {};
+            try {
+                const stored = localStorage.getItem(USERS_KEY);
+                if (stored) users = JSON.parse(stored);
+            } catch (e) {
+                users = {};
+            }
+
+            function saveUsers() {
+                localStorage.setItem(USERS_KEY, JSON.stringify(users));
+            }
+
+            let currentUser = null;
+            try {
+                const stored = localStorage.getItem(CURRENT_USER_KEY);
+                if (stored) currentUser = JSON.parse(stored);
+            } catch (e) {
+                currentUser = null;
+            }
+
+            const authContainer = document.getElementById('authContainer');
+            const appContainer = document.getElementById('appContainer');
+            const loginTabBtn = document.getElementById('loginTabBtn');
+            const registerTabBtn = document.getElementById('registerTabBtn');
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const loginMessage = document.getElementById('loginMessage');
+            const registerMessage = document.getElementById('registerMessage');
+            const loginBtn = document.getElementById('loginBtn');
+            const registerBtn = document.getElementById('registerBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const userInfo = document.getElementById('userInfo');
+            const mainContent = document.getElementById('mainContent');
+            const memoryFill = document.getElementById('memoryFill');
+            const memoryUsed = document.getElementById('memoryUsed');
+
+            const photoUpload = document.getElementById('photoUpload');
+            const uploadPhotoBtn = document.getElementById('uploadPhotoBtn');
+            const photoPreview = document.getElementById('photoPreview');
+            let selectedPhoto = null;
+
+            let isOnline = navigator.onLine;
+            
+            window.addEventListener('online', () => {
+                isOnline = true;
+                if (document.querySelector('.modern-tab[data-tab="png"]').classList.contains('active')) {
+                    renderPngTab();
+                }
+            });
+            
+            window.addEventListener('offline', () => {
+                isOnline = false;
+                if (document.querySelector('.modern-tab[data-tab="png"]').classList.contains('active')) {
+                    renderPngTab();
+                }
+            });
+
+            function updateTime() {
+                const now = new Date();
+                let hours = now.getHours();
+                let minutes = now.getMinutes();
+                hours = hours.toString().padStart(2, '0');
+                minutes = minutes.toString().padStart(2, '0');
+                const timeElements = document.querySelectorAll('#currentTime');
+                timeElements.forEach(el => el.textContent = hours + ':' + minutes);
+            }
+            updateTime();
+            setInterval(updateTime, 1000);
+
+            let memoryUsage = 9.2;
+            function updateMemoryUsage() {
+                memoryUsage = 5 + Math.random() * 10;
+                const percent = (memoryUsage / 20) * 100;
+                memoryFill.style.width = percent + '%';
+                memoryUsed.textContent = memoryUsage.toFixed(1);
+            }
+            setInterval(updateMemoryUsage, 3000);
+
+            if (currentUser) {
+                showApp();
+                renderPaintTab();
+            }
+
+            function showApp() {
+                authContainer.style.display = 'none';
+                appContainer.style.display = 'block';
+                updateUserInfo();
+            }
+
+            function showAuth() {
+                authContainer.style.display = 'block';
+                appContainer.style.display = 'none';
+            }
+
+            function updateUserInfo() {
+                if (currentUser) {
+                    const fullName = `${currentUser.firstName || ''} ${currentUser.lastName || ''}`.trim() || 'Пользователь';
+                    let avatarHtml = '';
+                    if (currentUser.photo) {
+                        avatarHtml = `<img src="${currentUser.photo}" alt="avatar">`;
+                    } else {
+                        avatarHtml = `<span>👤</span>`;
+                    }
+                    userInfo.innerHTML = `
+                        <div class="user-avatar">${avatarHtml}</div>
+                        <span class="user-name">${fullName}</span>
+                    `;
+                    
+                    userInfo.addEventListener('click', () => {
+                        document.querySelectorAll('.modern-tab').forEach(t => t.classList.remove('active'));
+                        document.querySelector('.modern-tab[data-tab="profile"]').classList.add('active');
+                        renderProfileTab();
+                    });
+                }
+            }
+
+            loginTabBtn.addEventListener('click', () => {
+                loginTabBtn.classList.add('active');
+                registerTabBtn.classList.remove('active');
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+                clearMessages();
+            });
+
+            registerTabBtn.addEventListener('click', () => {
+                registerTabBtn.classList.add('active');
+                loginTabBtn.classList.remove('active');
+                registerForm.classList.remove('hidden');
+                loginForm.classList.add('hidden');
+                clearMessages();
+            });
+
+            function clearMessages() {
+                loginMessage.classList.add('hidden');
+                registerMessage.classList.add('hidden');
+            }
+
+            function showError(element, message) {
+                element.textContent = message;
+                element.classList.remove('hidden');
+                element.classList.remove('success-message');
+                element.classList.add('error-message');
+            }
+
+            function showSuccess(element, message) {
+                element.textContent = message;
+                element.classList.remove('hidden');
+                element.classList.remove('error-message');
+                element.classList.add('success-message');
+            }
+
+            uploadPhotoBtn.addEventListener('click', () => {
+                photoUpload.click();
+            });
+
+            photoUpload.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        selectedPhoto = event.target.result;
+                        photoPreview.innerHTML = `<img src="${selectedPhoto}" alt="preview">`;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            function isValidEmail(email) {
+                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+            }
+
+            registerBtn.addEventListener('click', () => {
+                const email = document.getElementById('regEmail').value.trim();
+                const password = document.getElementById('regPassword').value;
+                const firstName = document.getElementById('regFirstName').value.trim();
+                const lastName = document.getElementById('regLastName').value.trim();
+
+                if (!email || !password || !firstName || !lastName) {
+                    showError(registerMessage, 'Пожалуйста, заполните все обязательные поля');
+                    return;
+                }
+
+                if (!isValidEmail(email)) {
+                    showError(registerMessage, 'Введите корректный email');
+                    return;
+                }
+
+                if (password.length < 6) {
+                    showError(registerMessage, 'Пароль должен содержать минимум 6 символов');
+                    return;
+                }
+
+                if (users[email]) {
+                    showError(registerMessage, 'Пользователь с таким email уже существует.');
+                    const switchBtn = document.createElement('button');
+                    switchBtn.className = 'link-btn';
+                    switchBtn.textContent = 'Перейти ко входу';
+                    switchBtn.onclick = () => {
+                        loginTabBtn.click();
+                        document.getElementById('loginEmail').value = email;
+                        registerMessage.classList.add('hidden');
+                    };
+                    registerMessage.appendChild(document.createElement('br'));
+                    registerMessage.appendChild(switchBtn);
+                    return;
+                }
+
+                const newUser = {
+                    email,
+                    password,
+                    firstName,
+                    lastName,
+                    photo: selectedPhoto || null,
+                    createdAt: new Date().toISOString()
+                };
+
+                users[email] = newUser;
+                saveUsers();
+
+                currentUser = newUser;
+                localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(newUser));
+
+                showSuccess(registerMessage, '✅ Аккаунт успешно создан! Переходим в приложение...');
+                
+                setTimeout(() => {
+                    showApp();
+                    renderPaintTab();
+                }, 1000);
+            });
+
+            loginBtn.addEventListener('click', () => {
+                const email = document.getElementById('loginEmail').value.trim();
+                const password = document.getElementById('loginPassword').value;
+
+                if (!email || !password) {
+                    showError(loginMessage, 'Введите email и пароль');
+                    return;
+                }
+
+                const user = users[email];
+                if (!user || user.password !== password) {
+                    showError(loginMessage, 'Неверный email или пароль');
+                    return;
+                }
+
+                currentUser = user;
+                localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
+
+                showSuccess(loginMessage, '✅ Успешный вход! Переходим в приложение...');
+
+                setTimeout(() => {
+                    showApp();
+                    renderPaintTab();
+                }, 1000);
+            });
+
+            logoutBtn.addEventListener('click', () => {
+                currentUser = null;
+                localStorage.removeItem(CURRENT_USER_KEY);
+                showAuth();
+                
+                document.getElementById('loginEmail').value = '';
+                document.getElementById('loginPassword').value = '';
+                document.getElementById('regEmail').value = '';
+                document.getElementById('regPassword').value = '';
+                document.getElementById('regFirstName').value = '';
+                document.getElementById('regLastName').value = '';
+                selectedPhoto = null;
+                photoPreview.innerHTML = '<span>📷</span>';
+                
+                clearMessages();
+            });
+
+            const tabs = document.querySelectorAll('.modern-tab');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    const tabName = tab.dataset.tab;
+                    if (tabName === 'paint') renderPaintTab();
+                    else if (tabName === 'profile') renderProfileTab();
+                    else if (tabName === 'png') renderPngTab();
+                    else if (tabName === 'settings') renderSettingsTab();
+                });
+            });
+
+            // ----- НАСТРОЙКИ (только удаление аккаунта) -----
+            function renderSettingsTab() {
+                mainContent.innerHTML = `
+                    <div class="right-panel" style="flex: 1; max-width: 600px; margin: 0 auto;">
+                        <h2 style="color: white; margin-bottom: 24px;">⚙️ Настройки</h2>
+                        
+                        <div class="settings-section">
+                            <h3 style="color: white; margin-bottom: 16px;">🔐 Безопасность</h3>
+                            
+                            <div class="settings-option">
+                                <span style="color: white;">Удалить аккаунт навсегда</span>
+                                <button class="modern-btn danger-btn" id="deleteAccountBtn">🗑️ Удалить</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('deleteAccountBtn').addEventListener('click', () => {
+                    if (confirm('❌ Вы уверены? Это действие НЕОБРАТИМО! Ваш аккаунт будет удален навсегда.')) {
+                        if (currentUser) {
+                            delete users[currentUser.email];
+                            saveUsers();
+                            
+                            currentUser = null;
+                            localStorage.removeItem(CURRENT_USER_KEY);
+                            showAuth();
+                            
+                            alert('Аккаунт успешно удален');
+                        }
+                    }
+                });
+            }
+
+            // ----- ПРОФИЛЬ -----
+            function renderProfileTab() {
+                if (!currentUser) return;
+                
+                mainContent.innerHTML = `
+                    <div class="right-panel" style="flex: 1; max-width: 600px; margin: 0 auto;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                            <h2 style="color: white;">Профиль пользователя</h2>
+                            <button class="modern-btn" id="editProfileBtn">✏️ Изменить данные</button>
+                        </div>
+                        
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 24px;">
+                            <div style="width: 120px; height: 120px; border-radius: 60px; overflow: hidden; border: 3px solid rgba(255,255,255,0.3);">
+                                ${currentUser.photo 
+                                    ? `<img src="${currentUser.photo}" style="width:100%; height:100%; object-fit:cover;">` 
+                                    : `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.1);"><span style="font-size:48px;">👤</span></div>`}
+                            </div>
+                            
+                            <div style="width:100%; background:rgba(255,255,255,0.1); border-radius:16px; padding:20px;">
+                                <div style="margin-bottom:16px;">
+                                    <div style="color:rgba(255,255,255,0.6); font-size:12px;">Имя</div>
+                                    <div style="color:white; font-size:18px;">${currentUser.firstName || 'Не указано'}</div>
+                                </div>
+                                <div style="margin-bottom:16px;">
+                                    <div style="color:rgba(255,255,255,0.6); font-size:12px;">Фамилия</div>
+                                    <div style="color:white; font-size:18px;">${currentUser.lastName || 'Не указано'}</div>
+                                </div>
+                                <div style="margin-bottom:16px;">
+                                    <div style="color:rgba(255,255,255,0.6); font-size:12px;">Email</div>
+                                    <div style="color:white; font-size:18px;">${currentUser.email}</div>
+                                </div>
+                                <div>
+                                    <div style="color:rgba(255,255,255,0.6); font-size:12px;">Дата регистрации</div>
+                                    <div style="color:white; font-size:18px;">${new Date(currentUser.createdAt).toLocaleDateString()}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('editProfileBtn').addEventListener('click', renderEditProfileForm);
+            }
+
+            function renderEditProfileForm() {
+                mainContent.innerHTML = `
+                    <div class="right-panel" style="flex: 1; max-width: 500px; margin: 0 auto;">
+                        <h2 style="color: white; margin-bottom: 24px;">✏️ Редактирование профиля</h2>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 20px;">
+                            <div>
+                                <label style="color: white; display: block; margin-bottom: 8px;">Фото профиля</label>
+                                <div style="display: flex; align-items: center; gap: 16px;">
+                                    <div style="width: 60px; height: 60px; border-radius: 30px; overflow: hidden; border: 2px solid rgba(255,255,255,0.3);" id="editPhotoPreview">
+                                        ${currentUser.photo 
+                                            ? `<img src="${currentUser.photo}" style="width:100%; height:100%; object-fit:cover;">` 
+                                            : `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center;"><span>📷</span></div>`}
+                                    </div>
+                                    <input type="file" id="editPhotoUpload" accept="image/*" style="display: none;">
+                                    <button class="modern-btn" id="editUploadPhotoBtn">Выбрать фото</button>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label style="color: white; display: block; margin-bottom: 8px;">Имя</label>
+                                <input type="text" id="editFirstName" value="${currentUser.firstName || ''}" style="width:100%; padding:12px; border-radius:24px; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.1); color:white;">
+                            </div>
+                            
+                            <div>
+                                <label style="color: white; display: block; margin-bottom: 8px;">Фамилия</label>
+                                <input type="text" id="editLastName" value="${currentUser.lastName || ''}" style="width:100%; padding:12px; border-radius:24px; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.1); color:white;">
+                            </div>
+                            
+                            <div style="background:rgba(255,255,255,0.05); border-radius:16px; padding:20px;">
+                                <h3 style="color:white; margin-bottom:16px;">🔐 Смена пароля</h3>
+                                <div style="margin-bottom:16px;">
+                                    <label style="color: white; display: block; margin-bottom: 8px;">Старый пароль</label>
+                                    <input type="password" id="oldPassword" style="width:100%; padding:12px; border-radius:24px; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.1); color:white;">
+                                </div>
+                                <div style="margin-bottom:16px;">
+                                    <label style="color: white; display: block; margin-bottom: 8px;">Новый пароль</label>
+                                    <input type="password" id="newPassword" style="width:100%; padding:12px; border-radius:24px; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.1); color:white;">
+                                </div>
+                                <div>
+                                    <label style="color: white; display: block; margin-bottom: 8px;">Подтвердите пароль</label>
+                                    <input type="password" id="confirmPassword" style="width:100%; padding:12px; border-radius:24px; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.1); color:white;">
+                                </div>
+                            </div>
+                            
+                            <button class="submit-btn" id="saveProfileBtn">💾 Сохранить изменения</button>
+                            <button class="modern-btn" id="cancelEditBtn" style="width:100%;">Отмена</button>
+                            
+                            <div id="editMessage" class="error-message hidden"></div>
+                        </div>
+                    </div>
+                `;
+                
+                const editPhotoUpload = document.getElementById('editPhotoUpload');
+                const editUploadPhotoBtn = document.getElementById('editUploadPhotoBtn');
+                const editPhotoPreview = document.getElementById('editPhotoPreview');
+                let newPhoto = null;
+                
+                editUploadPhotoBtn.addEventListener('click', () => {
+                    editPhotoUpload.click();
+                });
+                
+                editPhotoUpload.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                            newPhoto = event.target.result;
+                            editPhotoPreview.innerHTML = `<img src="${newPhoto}" style="width:100%; height:100%; object-fit:cover;">`;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+                
+                document.getElementById('saveProfileBtn').addEventListener('click', () => {
+                    const firstName = document.getElementById('editFirstName').value.trim();
+                    const lastName = document.getElementById('editLastName').value.trim();
+                    const oldPassword = document.getElementById('oldPassword').value;
+                    const newPassword = document.getElementById('newPassword').value;
+                    const confirmPassword = document.getElementById('confirmPassword').value;
+                    const messageEl = document.getElementById('editMessage');
+                    
+                    if (newPassword || confirmPassword || oldPassword) {
+                        if (!oldPassword) {
+                            showError(messageEl, 'Введите старый пароль');
+                            return;
+                        }
+                        
+                        if (oldPassword !== currentUser.password) {
+                            showError(messageEl, 'Неверный старый пароль');
+                            return;
+                        }
+                        
+                        if (newPassword !== confirmPassword) {
+                            showError(messageEl, 'Новые пароли не совпадают');
+                            return;
+                        }
+                        
+                        if (newPassword.length < 6) {
+                            showError(messageEl, 'Новый пароль должен быть минимум 6 символов');
+                            return;
+                        }
+                    }
+                    
+                    const updatedUser = {
+                        ...currentUser,
+                        firstName: firstName || currentUser.firstName,
+                        lastName: lastName || currentUser.lastName,
+                        photo: newPhoto || currentUser.photo,
+                    };
+                    
+                    if (newPassword) {
+                        updatedUser.password = newPassword;
+                    }
+                    
+                    users[currentUser.email] = updatedUser;
+                    currentUser = updatedUser;
+                    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(updatedUser));
+                    saveUsers();
+                    
+                    showSuccess(messageEl, '✅ Данные успешно обновлены!');
+                    
+                    setTimeout(() => {
+                        updateUserInfo();
+                        renderProfileTab();
+                    }, 1000);
+                });
+                
+                document.getElementById('cancelEditBtn').addEventListener('click', renderProfileTab);
+            }
+
+            // ----- PNG ГАЛЕРЕЯ -----
+            function renderPngTab() {
+                if (!isOnline) {
+                    mainContent.innerHTML = `
+                        <div class="right-panel" style="flex: 1; max-width: 600px; margin: 0 auto; text-align: center;">
+                            <div class="internet-status status-offline">
+                                <span>📶</span>
+                                <span>Нет подключения к интернету</span>
+                            </div>
+                            <div style="color: white; margin-top: 40px;">
+                                <h3>❌ Проверьте подключение к интернету</h3>
+                                <p style="margin-top: 20px; color: rgba(255,255,255,0.6);">Как только интернет появится, галерея загрузится автоматически</p>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                mainContent.innerHTML = `
+                    <div class="canvas-container" style="flex: 1; overflow-y: auto;">
+                        <div class="internet-status status-online">
+                            <span>📶</span>
+                            <span>Вы онлайн - доступно 1000+ PNG</span>
+                        </div>
+                        
+                        <div class="png-gallery" id="pngGallery">
+                            <div style="color: white; text-align: center; padding: 40px;">Загрузка PNG галереи...</div>
+                        </div>
+                    </div>
+                `;
+                
+                loadPngGallery();
+            }
+
+            function loadPngGallery() {
+                const gallery = document.getElementById('pngGallery');
+                
+                const pngImages = [];
+                
+                for (let i = 1; i <= 1000; i++) {
+                    pngImages.push({
+                        id: i,
+                        title: `PNG ${i}`,
+                        url: `https://picsum.photos/200/200?random=${i}&seed=${i}`,
+                        category: 'random'
+                    });
+                }
+                
+                displayPngGallery(pngImages);
+            }
+
+            function displayPngGallery(images) {
+                const gallery = document.getElementById('pngGallery');
+                gallery.innerHTML = '';
+                
+                images.forEach(img => {
+                    const item = document.createElement('div');
+                    item.className = 'png-item';
+                    item.innerHTML = `
+                        <img src="${img.url}" alt="${img.title}" loading="lazy" onerror="this.src='https://via.placeholder.com/200'">
+                        <div class="png-item-title">${img.title}</div>
+                    `;
+                    
+                    item.addEventListener('click', () => showPngOptions(img));
+                    gallery.appendChild(item);
+                });
+            }
+
+            function showPngOptions(image) {
+                if (!isOnline) {
+                    alert('❌ Нет подключения к интернету. Проверьте соединение.');
+                    return;
+                }
+
+                const optionsDiv = document.createElement('div');
+                optionsDiv.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: rgba(255,255,255,0.2);
+                    backdrop-filter: blur(20px);
+                    border-radius: 32px;
+                    padding: 32px;
+                    z-index: 1000;
+                    color: white;
+                    min-width: 300px;
+                    animation: scaleIn 0.3s ease-out;
+                `;
+                
+                optionsDiv.innerHTML = `
+                    <h3 style="margin-bottom: 20px;">🖼️ ${image.title}</h3>
+                    <div style="margin-bottom: 16px;">
+                        <label style="display: block; margin-bottom: 8px;">Ширина:</label>
+                        <input type="number" id="pngWidth" value="100" min="10" max="400" style="width:100%; padding:8px; border-radius:20px; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.1); color:white;">
+                    </div>
+                    <div style="margin-bottom: 24px;">
+                        <label style="display: block; margin-bottom: 8px;">Высота:</label>
+                        <input type="number" id="pngHeight" value="100" min="10" max="400" style="width:100%; padding:8px; border-radius:20px; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.1); color:white;">
+                    </div>
+                    <div style="display: flex; gap: 16px; margin-bottom: 24px;">
+                        <button class="modern-btn" id="savePngBtn">💾 Сохранить</button>
+                        <button class="modern-btn" id="addToCanvasBtn">➕ Добавить на холст</button>
+                    </div>
+                    <button class="modern-btn" id="closeOptionsBtn" style="width:100%;">Отмена</button>
+                `;
+                
+                document.body.appendChild(optionsDiv);
+                
+                const overlay = document.createElement('div');
+                overlay.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.5);
+                    z-index: 999;
+                    animation: fadeIn 0.3s ease-out;
+                `;
+                document.body.appendChild(overlay);
+                
+                document.getElementById('savePngBtn').addEventListener('click', () => {
+                    const width = document.getElementById('pngWidth').value;
+                    const height = document.getElementById('pngHeight').value;
+                    savePngToFile(image, width, height);
+                    document.body.removeChild(optionsDiv);
+                    document.body.removeChild(overlay);
+                });
+                
+                document.getElementById('addToCanvasBtn').addEventListener('click', () => {
+                    const width = document.getElementById('pngWidth').value;
+                    const height = document.getElementById('pngHeight').value;
+                    addPngToCanvas(image, width, height);
+                    document.body.removeChild(optionsDiv);
+                    document.body.removeChild(overlay);
+                    
+                    document.querySelectorAll('.modern-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelector('.modern-tab[data-tab="paint"]').classList.add('active');
+                    renderPaintTab();
+                });
+                
+                document.getElementById('closeOptionsBtn').addEventListener('click', () => {
+                    document.body.removeChild(optionsDiv);
+                    document.body.removeChild(overlay);
+                });
+            }
+
+            function savePngToFile(image, width, height) {
+                fetch(image.url)
+                    .then(response => response.blob())
+                    .then(blob => {
+                        const link = document.createElement('a');
+                        link.href = URL.createObjectURL(blob);
+                        link.download = `${image.title}.png`;
+                        link.click();
+                        URL.revokeObjectURL(link.href);
+                        
+                        setTimeout(() => {
+                            alert('✅ PNG сохранен!');
+                        }, 100);
+                    })
+                    .catch(() => {
+                        alert('❌ Ошибка при сохранении PNG');
+                    });
+            }
+
+            function addPngToCanvas(image, width, height) {
+                const pngToAdd = {
+                    url: image.url,
+                    title: image.title,
+                    width: parseInt(width),
+                    height: parseInt(height),
+                    x: 50,
+                    y: 50
+                };
+                
+                localStorage.setItem('png_to_add', JSON.stringify(pngToAdd));
+            }
+
+            function addPngToCanvasFromStorage(png) {
+                const layer = document.getElementById('pngLayer');
+                if (!layer) return;
+                
+                const pngDiv = document.createElement('div');
+                pngDiv.className = 'png-object';
+                pngDiv.style.position = 'absolute';
+                pngDiv.style.left = png.x + 'px';
+                pngDiv.style.top = png.y + 'px';
+                pngDiv.style.width = png.width + 'px';
+                pngDiv.style.height = png.height + 'px';
+                
+                pngDiv.innerHTML = `
+                    <img src="${png.url}" alt="${png.title}">
+                    <div class="png-delete-btn" onclick="this.parentElement.remove()">✕</div>
+                `;
+                
+                layer.appendChild(pngDiv);
+            }
+
+            // ----- РИСОВАНИЕ С ПРЕСЕТАМИ РАЗМЕРОВ -----
+            function renderPaintTab() {
+                mainContent.innerHTML = `
+                    <div class="canvas-container">
+                        <div class="canvas-size-presets">
+                            <div class="size-preset" data-width="300" data-height="300">Квадрат 300</div>
+                            <div class="size-preset" data-width="500" data-height="500">Квадрат 500</div>
+                            <div class="size-preset" data-width="800" data-height="600">HD 800x600</div>
+                            <div class="size-preset" data-width="1024" data-height="768">XGA 1024x768</div>
+                            <div class="size-preset" data-width="1280" data-height="720">720p 1280x720</div>
+                            <div class="size-preset" data-width="1920" data-height="1080">1080p 1920x1080</div>
+                            <span class="current-size" id="currentSizeDisplay">500x500</span>
+                        </div>
+                        <canvas id="paintCanvas" width="500" height="500"></canvas>
+                        <div class="png-layer" id="pngLayer"></div>
+                    </div>
+                    <div class="right-panel" id="rightPanel"></div>
+                `;
+                
+                initPaintEditor();
+                
+                // Пресеты размеров
+                document.querySelectorAll('.size-preset').forEach(preset => {
+                    preset.addEventListener('click', () => {
+                        const width = parseInt(preset.dataset.width);
+                        const height = parseInt(preset.dataset.height);
+                        
+                        const canvas = document.getElementById('paintCanvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        
+                        document.getElementById('currentSizeDisplay').textContent = `${width}x${height}`;
+                        
+                        document.querySelectorAll('.size-preset').forEach(p => p.classList.remove('active'));
+                        preset.classList.add('active');
+                        
+                        const ctx = canvas.getContext('2d');
+                        ctx.fillStyle = '#FFFFFF';
+                        ctx.fillRect(0, 0, width, height);
+                    });
+                });
+                
+                const pngToAdd = localStorage.getItem('png_to_add');
+                if (pngToAdd) {
+                    const png = JSON.parse(pngToAdd);
+                    setTimeout(() => addPngToCanvasFromStorage(png), 100);
+                    localStorage.removeItem('png_to_add');
+                }
+            }
+
+            function initPaintEditor() {
+                const canvas = document.getElementById('paintCanvas');
+                if (!canvas) return;
+                
+                const ctx = canvas.getContext('2d');
+                canvas.width = 500; 
+                canvas.height = 500;
+
+                function clearCanvas() {
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                }
+                clearCanvas();
+                ctx.lineCap = 'round'; 
+                ctx.lineJoin = 'round';
+
+                let currentColor = '#000000';
+                let brushSize = 10;
+                let opacity = 100;
+                let currentTool = 'brush';
+                let drawing = false;
+                let lastX, lastY;
+                let lineStartX, lineStartY;
+
+                ctx.strokeStyle = currentColor;
+                ctx.lineWidth = brushSize;
+                ctx.globalAlpha = opacity / 100;
+
+                let paletteCanvas, pCtx, hueBar, hueIndicator, selectedColorBox, mainPaletteDiv;
+                let currentHue = 0;
+
+                function hslToRgb(h, s, l) {
+                    let r, g, b;
+                    if (s === 0) {
+                        r = g = b = l;
+                    } else {
+                        const hue2rgb = (p, q, t) => {
+                            if (t < 0) t += 1;
+                            if (t > 1) t -= 1;
+                            if (t < 1/6) return p + (q - p) * 6 * t;
+                            if (t < 1/2) return q;
+                            if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                            return p;
+                        };
+                        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                        const p = 2 * l - q;
+                        r = hue2rgb(p, q, h + 1/3);
+                        g = hue2rgb(p, q, h);
+                        b = hue2rgb(p, q, h - 1/3);
+                    }
+                    return [Math.round(r*255), Math.round(g*255), Math.round(b*255)];
+                }
+
+                function renderPalette(hue) {
+                    if (!pCtx) return;
+                    const w = 200, h = 200;
+                    const imageData = pCtx.createImageData(w, h);
+                    const data = imageData.data;
+                    for (let y = 0; y < h; y++) {
+                        for (let x = 0; x < w; x++) {
+                            const sat = x / w;
+                            const val = 1 - (y / h);
+                            const rgb = hslToRgb(hue/360, sat, val);
+                            const idx = (y * w + x) * 4;
+                            data[idx] = rgb[0];
+                            data[idx+1] = rgb[1];
+                            data[idx+2] = rgb[2];
+                            data[idx+3] = 255;
+                        }
+                    }
+                    pCtx.putImageData(imageData, 0, 0);
+                }
+
+                function getPaletteColor(clientX, clientY) {
+                    if (!paletteCanvas) return null;
+                    const rect = paletteCanvas.getBoundingClientRect();
+                    const scaleX = paletteCanvas.width / rect.width;
+                    const scaleY = paletteCanvas.height / rect.height;
+                    const canvasX = Math.floor((clientX - rect.left) * scaleX);
+                    const canvasY = Math.floor((clientY - rect.top) * scaleY);
+                    if (canvasX < 0 || canvasX >= 200 || canvasY < 0 || canvasY >= 200) return null;
+                    const pixel = pCtx.getImageData(canvasX, canvasY, 1, 1).data;
+                    return `#${((1 << 24) + (pixel[0] << 16) + (pixel[1] << 8) + pixel[2]).toString(16).slice(1)}`;
+                }
+
+                function hexToRgb(hex) {
+                    const r = parseInt(hex.slice(1,3),16);
+                    const g = parseInt(hex.slice(3,5),16);
+                    const b = parseInt(hex.slice(5,7),16);
+                    return [r,g,b];
+                }
+
+                function floodFill(x, y) {
+                    const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    const data = img.data;
+                    const target = [
+                        data[Math.floor(y) * canvas.width * 4 + Math.floor(x) * 4],
+                        data[Math.floor(y) * canvas.width * 4 + Math.floor(x) * 4 + 1],
+                        data[Math.floor(y) * canvas.width * 4 + Math.floor(x) * 4 + 2]
+                    ];
+                    const fill = hexToRgb(currentColor);
+                    if (target[0] === fill[0] && target[1] === fill[1] && target[2] === fill[2]) return;
+                    
+                    const stack = [[Math.floor(x), Math.floor(y)]];
+                    while (stack.length) {
+                        const [cx, cy] = stack.pop();
+                        const idx = (cy * canvas.width + cx) * 4;
+                        if (data[idx] !== target[0] || data[idx + 1] !== target[1] || data[idx + 2] !== target[2]) continue;
+                        
+                        data[idx] = fill[0];
+                        data[idx + 1] = fill[1];
+                        data[idx + 2] = fill[2];
+                        data[idx + 3] = 255 * (opacity / 100);
+                        
+                        if (cx > 0) stack.push([cx - 1, cy]);
+                        if (cx < canvas.width - 1) stack.push([cx + 1, cy]);
+                        if (cy > 0) stack.push([cx, cy - 1]);
+                        if (cy < canvas.height - 1) stack.push([cx, cy + 1]);
+                    }
+                    ctx.putImageData(img, 0, 0);
+                }
+
+                function getCoords(e) {
+                    const rect = canvas.getBoundingClientRect();
+                    const scaleX = canvas.width / rect.width;
+                    const scaleY = canvas.height / rect.height;
+                    const clientX = e.clientX ?? (e.touches?.[0]?.clientX ?? 0);
+                    const clientY = e.clientY ?? (e.touches?.[0]?.clientY ?? 0);
+                    let x = (clientX - rect.left) * scaleX;
+                    let y = (clientY - rect.top) * scaleY;
+                    x = Math.min(canvas.width - 1, Math.max(0, x));
+                    y = Math.min(canvas.height - 1, Math.max(0, y));
+                    return {x, y};
+                }
+
+                function startDraw(e) {
+                    e.preventDefault();
+                    const {x, y} = getCoords(e);
+                    
+                    if (currentTool === 'line') {
+                        lineStartX = x;
+                        lineStartY = y;
+                        drawing = true;
+                    } else {
+                        drawing = true;
+                        lastX = x;
+                        lastY = y;
+                        
+                        if (currentTool === 'fill') {
+                            floodFill(x, y);
+                            drawing = false;
+                        } else if (currentTool === 'spray') {
+                            ctx.fillStyle = currentColor;
+                            ctx.globalAlpha = opacity / 100;
+                            for (let i = 0; i < 12; i++) {
+                                const ox = (Math.random() - 0.5) * brushSize * 1.5;
+                                const oy = (Math.random() - 0.5) * brushSize * 1.5;
+                                if (Math.hypot(ox, oy) < brushSize * 0.8) {
+                                    ctx.fillRect(x + ox, y + oy, 1, 1);
+                                }
+                            }
+                        } else {
+                            ctx.beginPath();
+                            ctx.moveTo(x, y);
+                        }
+                    }
+                }
+
+                function drawMove(e) {
+                    if (!drawing) return;
+                    e.preventDefault();
+                    const {x, y} = getCoords(e);
+                    
+                    if (currentTool === 'line') {
+                        return;
+                    } else if (currentTool === 'brush' || currentTool === 'pencil') {
+                        ctx.strokeStyle = currentColor;
+                        ctx.lineWidth = brushSize;
+                        ctx.globalAlpha = opacity / 100;
+                        ctx.lineTo(x, y);
+                        ctx.stroke();
+                        ctx.beginPath();
+                        ctx.moveTo(x, y);
+                    } else if (currentTool === 'spray') {
+                        ctx.fillStyle = currentColor;
+                        ctx.globalAlpha = opacity / 100;
+                        for (let i = 0; i < 12; i++) {
+                            const ox = (Math.random() - 0.5) * brushSize * 1.5;
+                            const oy = (Math.random() - 0.5) * brushSize * 1.5;
+                            if (Math.hypot(ox, oy) < brushSize * 0.8) {
+                                ctx.fillRect(x + ox, y + oy, 1, 1);
+                            }
+                        }
+                    }
+                    lastX = x;
+                    lastY = y;
+                }
+
+                function stopDraw(e) {
+                    if (!drawing) return;
+                    e?.preventDefault();
+                    
+                    if (currentTool === 'line' && lineStartX !== undefined && lineStartY !== undefined) {
+                        const {x, y} = getCoords(e);
+                        ctx.strokeStyle = currentColor;
+                        ctx.lineWidth = brushSize;
+                        ctx.globalAlpha = opacity / 100;
+                        ctx.beginPath();
+                        ctx.moveTo(lineStartX, lineStartY);
+                        ctx.lineTo(x, y);
+                        ctx.stroke();
+                        
+                        lineStartX = undefined;
+                        lineStartY = undefined;
+                    }
+                    
+                    drawing = false;
+                    ctx.closePath();
+                    lastX = lastY = undefined;
+                }
+
+                canvas.addEventListener('mousedown', startDraw);
+                canvas.addEventListener('mousemove', drawMove);
+                canvas.addEventListener('mouseup', stopDraw);
+                canvas.addEventListener('mouseleave', stopDraw);
+                canvas.addEventListener('touchstart', startDraw, {passive: false});
+                canvas.addEventListener('touchmove', drawMove, {passive: false});
+                canvas.addEventListener('touchend', stopDraw);
+                canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+                const rightPanel = document.getElementById('rightPanel');
+                
+                function renderPaintTools() {
+                    rightPanel.innerHTML = `
+                        <div class="palette-section">
+                            <div class="section-title"><span>🎨</span> Выбор цвета</div>
+                            <div class="color-picker-area">
+                                <div class="hue-bar-container">
+                                    <div class="hue-bar" id="hueBar">
+                                        <div id="hueIndicator" class="hue-indicator" style="top: 0px;"></div>
+                                    </div>
+                                </div>
+                                <div class="main-palette" id="mainPalette">
+                                    <canvas id="paletteCanvas" width="200" height="200"></canvas>
+                                </div>
+                            </div>
+                            <div class="preview-row">
+                                <div class="current-color" id="selectedColorBox" style="background: ${currentColor};"></div>
+                                <button class="modern-add-btn" id="addCustomFromPickerBtn">➕ Добавить в мои</button>
+                            </div>
+                        </div>
+
+                        <div class="custom-colors">
+                            <div class="section-title">📁 Мои цвета</div>
+                            <div class="swatches-grid" id="customSwatchesContainer"></div>
+                            <button class="modern-btn" id="clearCustomBtn" style="width:100%;">Очистить мои</button>
+                        </div>
+
+                        <div style="margin-top: 12px;">
+                            <div class="section-title">🔲 Стандартные</div>
+                            <div class="presets-grid" id="presetGrid"></div>
+                        </div>
+                        
+                        <div class="tools-section" style="margin-top: 16px;">
+                            <div class="section-title">🖌️ Инструменты</div>
+                            <div class="tools-grid">
+                                <div class="tool-card ${currentTool === 'brush' ? 'active' : ''}" data-tool="brush">
+                                    <span>🖌️</span> Кисть
+                                </div>
+                                <div class="tool-card ${currentTool === 'pencil' ? 'active' : ''}" data-tool="pencil">
+                                    <span>✏️</span> Карандаш
+                                </div>
+                                <div class="tool-card ${currentTool === 'spray' ? 'active' : ''}" data-tool="spray">
+                                    <span>💨</span> Спрей
+                                </div>
+                                <div class="tool-card ${currentTool === 'fill' ? 'active' : ''}" data-tool="fill">
+                                    <span>🪣</span> Заливка
+                                </div>
+                                <div class="tool-card ${currentTool === 'line' ? 'active' : ''}" data-tool="line">
+                                    <span>📏</span> Линия
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tools-section">
+                            <div class="section-title">✏️ Размер кисти</div>
+                            <div class="slider-container">
+                                <input type="range" id="brushSizeSlider" class="modern-slider" min="1" max="40" value="${brushSize}">
+                                <span id="brushSizeValue" class="value-badge">${brushSize}px</span>
+                            </div>
+                        </div>
+                        
+                        <div class="tools-section">
+                            <div class="section-title">🔮 Прозрачность</div>
+                            <div class="slider-container">
+                                <input type="range" id="opacitySlider" class="modern-slider" min="0" max="100" value="${opacity}">
+                                <span id="opacityValue" class="value-badge">${opacity}%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="tools-section">
+                            <div class="section-title">💾 Память</div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="flex:1; height:8px; background:rgba(255,255,255,0.1); border-radius:4px;">
+                                    <div style="width:${(memoryUsage/20)*100}%; height:100%; background:linear-gradient(90deg, #00ff9d, #00b8ff); border-radius:4px;"></div>
+                                </div>
+                                <span style="color:white; font-size:12px;">${memoryUsage.toFixed(1)}/20 МБ</span>
+                            </div>
+                        </div>
+                    `;
+
+                    paletteCanvas = document.getElementById('paletteCanvas');
+                    pCtx = paletteCanvas.getContext('2d');
+                    paletteCanvas.width = 200;
+                    paletteCanvas.height = 200;
+                    hueBar = document.getElementById('hueBar');
+                    hueIndicator = document.getElementById('hueIndicator');
+                    selectedColorBox = document.getElementById('selectedColorBox');
+                    mainPaletteDiv = document.getElementById('mainPalette');
+
+                    renderPalette(currentHue);
+
+                    hueBar.addEventListener('click', (e) => {
+                        const rect = hueBar.getBoundingClientRect();
+                        let y = e.clientY - rect.top;
+                        y = Math.max(0, Math.min(rect.height, y));
+                        const hue = (y / rect.height) * 360;
+                        currentHue = Math.min(359, Math.max(0, hue));
+                        hueIndicator.style.top = (y - 2) + 'px';
+                        renderPalette(currentHue);
+                    });
+
+                    mainPaletteDiv.addEventListener('click', (e) => {
+                        const color = getPaletteColor(e.clientX, e.clientY);
+                        if (color) {
+                            currentColor = color;
+                            ctx.strokeStyle = currentColor;
+                            selectedColorBox.style.backgroundColor = color;
+                        }
+                    });
+
+                    const presetColors = ['#000000', '#808080', '#800000', '#808000', '#008000', '#008080', '#000080', '#800080', '#808040', '#004040', '#0080FF', '#004080', '#400080', '#8000FF', '#FF0000', '#FFFFFF'];
+                    const presetGrid = document.getElementById('presetGrid');
+                    presetColors.forEach(hex => {
+                        const sw = document.createElement('div');
+                        sw.className = 'preset-swatch';
+                        sw.style.backgroundColor = hex;
+                        sw.dataset.color = hex;
+                        sw.addEventListener('click', () => {
+                            currentColor = hex;
+                            ctx.strokeStyle = hex;
+                            selectedColorBox.style.backgroundColor = hex;
+                        });
+                        presetGrid.appendChild(sw);
+                    });
+
+                    let customColors = JSON.parse(localStorage.getItem('ipaint_customColors')) || ['#FF6B6B', '#4ECDC4', '#FFD166'];
+                    const customContainer = document.getElementById('customSwatchesContainer');
+                    
+                    function renderCustom() {
+                        customContainer.innerHTML = '';
+                        customColors.forEach(hex => {
+                            const sw = document.createElement('div');
+                            sw.className = 'color-swatch';
+                            sw.style.backgroundColor = hex;
+                            sw.dataset.color = hex;
+                            sw.addEventListener('click', () => {
+                                currentColor = hex;
+                                ctx.strokeStyle = hex;
+                                selectedColorBox.style.backgroundColor = hex;
+                            });
+                            customContainer.appendChild(sw);
+                        });
+                    }
+                    renderCustom();
+
+                    document.getElementById('addCustomFromPickerBtn').addEventListener('click', () => {
+                        if (!customColors.includes(currentColor)) customColors.push(currentColor);
+                        localStorage.setItem('ipaint_customColors', JSON.stringify(customColors));
+                        renderCustom();
+                    });
+
+                    document.getElementById('clearCustomBtn').addEventListener('click', () => {
+                        customColors = [];
+                        localStorage.setItem('ipaint_customColors', JSON.stringify(customColors));
+                        renderCustom();
+                    });
+
+                    document.querySelectorAll('.tool-card').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            const tool = btn.dataset.tool;
+                            if (tool) {
+                                currentTool = tool;
+                                document.querySelectorAll('.tool-card').forEach(c => c.classList.remove('active'));
+                                btn.classList.add('active');
+                            }
+                        });
+                    });
+
+                    const sizeSlider = document.getElementById('brushSizeSlider');
+                    if (sizeSlider) {
+                        sizeSlider.addEventListener('input', (e) => {
+                            brushSize = parseInt(e.target.value);
+                            document.getElementById('brushSizeValue').innerText = brushSize + 'px';
+                            ctx.lineWidth = brushSize;
+                        });
+                    }
+
+                    const opSlider = document.getElementById('opacitySlider');
+                    if (opSlider) {
+                        opSlider.addEventListener('input', (e) => {
+                            opacity = parseInt(e.target.value);
+                            document.getElementById('opacityValue').innerText = opacity + '%';
+                            ctx.globalAlpha = opacity / 100;
+                        });
+                    }
+                }
+
+                renderPaintTools();
+            }
+
+            if (currentUser) {
+                showApp();
+                renderPaintTab();
+            }
+        })();
+    </script>
+</body>
+</html>
